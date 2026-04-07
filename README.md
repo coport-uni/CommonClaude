@@ -59,6 +59,15 @@ Every task follows this workflow:
 - **No hardcoding** — Never write code that only passes specific test inputs
 - **Code quality first** — Prioritize readability, maintainability, and correctness over passing tests
 
+### 5. Using `ultrathink`
+
+When in **plan mode** or tackling **complex tasks**, append `ultrathink` to the end of your command. This signals Claude to use extended reasoning for deeper analysis.
+
+```
+# Example
+Review this entire codebase ultrathink
+```
+
 ---
 
 ## Claude Code IDE Commands
@@ -66,13 +75,10 @@ Every task follows this workflow:
 | Command            | Description                                         |
 |--------------------|-----------------------------------------------------|
 | `/clear`           | Clears Claude's memory context.                     |
-| `/redo`            | Re-executes the previous action.                    |
-| `/undo`            | Restores the previous state.                        |
+| `/rewind`            | Re-executes the previous action.                  |
 | `/memory`          | Adds specific content to memory.                    |
 | `/permission`      | Configures permissions for Bash, Edit, Write, etc.  |
 | `/review`          | Checks the current session's context cost.          |
-| `/test`            | Runs the code testing function.                     |
-| `/install-github`  | Installs the GitHub connection.                     |
 
 ---
 
@@ -81,13 +87,10 @@ Every task follows this workflow:
 | Shortcut                     | Description                                      |
 |------------------------------|--------------------------------------------------|
 | `Shift` + `Tab`              | Toggles approval mode.                           |
-| `Ctrl` + `Shift` + `E`      | Opens the Explorer panel.                        |
-| `Ctrl` + `Shift` + `X`      | Opens the Extensions panel.                      |
-| `Ctrl` + `L`                 | Switches focus between editor and Claude.        |
-| `Ctrl/Cmd` + `Shift` + `C`  | Opens Claude in the current sidebar.             |
-| `Ctrl/Cmd` + `K`            | Starts an inline editor conversation.            |
-| `Ctrl/Cmd` + `I`            | Starts an inline editor conversation.            |
-| `Option` + `Enter`           | Sets focus (@Mention) on the current selection.  |
+| `Ctrl` + `Shift` + `E`       | Opens the Explorer panel.                        |
+| `Ctrl` + `Shift` + `X`       | Opens the Extensions panel.                      |
+| `Ctrl/Cmd` + `K`             | Starts an inline editor reference.               |
+
 
 ---
 
