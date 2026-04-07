@@ -102,3 +102,41 @@ All debug, exploratory, and throwaway test scripts must be saved in `claude_test
 2. 사용자에게 `ToDo.md` 내용을 확인받는다.
 3. 확인이 완료되면 `gh issue create` 명령으로 GitHub 이슈를 생성한다.
 4. 작업 진행 중 완료된 항목은 `ToDo.md`에서 체크 표시한다.
+
+---
+
+## 4. Testing Rules
+
+테스트는 코드의 **정확성과 품질**을 검증하기 위한 것이다. 테스트를 통과시키기 위해 코드 품질을 희생해서는 안 된다.
+
+### Rules
+
+1. **매직넘버 금지**: 테스트를 통과시키기 위해 의미 없는 특정 숫자나 값을 직접 사용하지 않는다. 모든 값은 명확한 의미를 가지는 상수나 변수로 정의한다.
+   ```python
+   # Bad: 매직넘버로 테스트 통과
+   def calculate_area(radius):
+       return 3.14 * radius * radius  # 왜 3.14인가?
+
+   # Good: 의미 있는 상수 사용
+   import math
+
+   def calculate_area(radius):
+       return math.pi * radius * radius
+   ```
+
+2. **하드코딩 금지**: 테스트 케이스의 예상 결과에 맞추어 코드를 하드코딩하지 않는다. 코드는 올바른 로직으로 동작해야 하며, 특정 입력에만 맞춘 분기나 고정값을 사용하지 않는다.
+   ```python
+   # Bad: 테스트 입력에 맞춘 하드코딩
+   def convert_temperature(celsius):
+       if celsius == 100:
+           return 212
+       if celsius == 0:
+           return 32
+       return celsius * 1.8 + 32
+
+   # Good: 올바른 로직 구현
+   def convert_temperature(celsius):
+       return celsius * 1.8 + 32
+   ```
+
+3. **코드 품질 우선**: 테스트 통과 여부보다 코드의 가독성, 유지보수성, 정확성을 우선시한다. 테스트가 실패하면 테스트를 속이는 것이 아니라 로직을 올바르게 수정한다.
