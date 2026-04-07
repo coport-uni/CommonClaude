@@ -58,6 +58,10 @@ All code follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.m
   # for stability. Adams-Bashforth causes shocks.
   ```
 
+### Language
+
+- All code comments, docstrings, commit messages, and documentation files (including README) must be written in **English**.
+
 ### Documentation
 
 - All public functions and classes must have **docstrings** (PEP 257 / Google style).

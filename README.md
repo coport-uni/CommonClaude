@@ -1,0 +1,97 @@
+# CommonClaude
+
+**Project-wide conventions for all Claude Code sessions**
+
+This repository defines the rules and workflows that every [Claude Code](https://claude.ai/code) session must follow. The core document is [`CommonClaude.md`](CommonClaude.md).
+
+---
+
+## Environment
+
+| Item       | Detail                                 |
+|------------|----------------------------------------|
+| Runtime    | Docker container (`--privileged`)      |
+| OS         | Ubuntu 24.04 (Noble)                   |
+| Dev tool   | Claude Code (CLI / VS Code extension)  |
+
+---
+
+## Convention Summary
+
+### 1. MIT Code Convention
+
+Follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.mit.edu/broad/commkit/coding-and-comment-style/).
+
+| Element  | Style        | Example            |
+|----------|--------------|--------------------|
+| Variable | `lower_case` | `joint_angle`      |
+| Function | `lower_case` | `send_action`      |
+| Class    | `CamelCase`  | `FairinoFollower`  |
+| Constant | `lower_case` | `_settle_mid_s`    |
+| Module   | `lowercase`  | `fairino_follower`  |
+
+- 80-column limit, 4-space indentation
+- Google-style docstrings required (`Args:`, `Returns:`, `Raises:`)
+- All comments, docstrings, and documentation must be in **English**
+- TODO format: `# TODO: (@owner) description`
+
+### 2. Debug File Management
+
+| Location        | Purpose                                     |
+|-----------------|---------------------------------------------|
+| `tests/`        | Production-quality tests for CI/CD          |
+| `claude_test/`  | Debug scripts, one-off experiments          |
+
+### 3. Task Management
+
+Every task follows this workflow:
+
+1. **Validate input** — Check if the command is explicit and if reference materials exist
+2. **Write ToDo.md** — Organize the task list
+3. **User confirmation** — Get approval on ToDo.md contents
+4. **Create GitHub issue** — Register via `gh issue create`
+5. **Execute** — Check off completed items in ToDo.md
+6. **Update issue** — Sync progress via `gh issue edit`
+
+### 4. Testing Rules
+
+- **No magic numbers** — Use meaningful constants instead of unexplained values
+- **No hardcoding** — Never write code that only passes specific test inputs
+- **Code quality first** — Prioritize readability, maintainability, and correctness over passing tests
+
+---
+
+## Claude Code IDE Commands
+
+| Command            | Description                                         |
+|--------------------|-----------------------------------------------------|
+| `/clear`           | Clears Claude's memory context.                     |
+| `/redo`            | Re-executes the previous action.                    |
+| `/undo`            | Restores the previous state.                        |
+| `/memory`          | Adds specific content to memory.                    |
+| `/permission`      | Configures permissions for Bash, Edit, Write, etc.  |
+| `/review`          | Checks the current session's context cost.          |
+| `/test`            | Runs the code testing function.                     |
+| `/install-github`  | Installs the GitHub connection.                     |
+
+---
+
+## Claude Code Shortcuts (VS Code)
+
+| Shortcut                     | Description                                      |
+|------------------------------|--------------------------------------------------|
+| `Shift` + `Tab`              | Toggles approval mode.                           |
+| `Ctrl` + `Shift` + `E`      | Opens the Explorer panel.                        |
+| `Ctrl` + `Shift` + `X`      | Opens the Extensions panel.                      |
+| `Ctrl` + `L`                 | Switches focus between editor and Claude.        |
+| `Ctrl/Cmd` + `Shift` + `C`  | Opens Claude in the current sidebar.             |
+| `Ctrl/Cmd` + `K`            | Starts an inline editor conversation.            |
+| `Ctrl/Cmd` + `I`            | Starts an inline editor conversation.            |
+| `Option` + `Enter`           | Sets focus (@Mention) on the current selection.  |
+
+---
+
+## References
+
+- Full rules: [`CommonClaude.md`](CommonClaude.md)
+- Debug file index: [`claude_test/README.md`](claude_test/README.md)
