@@ -14,5 +14,5 @@ IDECommand.png, ShortCut.png 내용을 포함한다.
   - [x] IDE 명령어 정보 (IDECommand.png 참고)
   - [x] 단축키 정보 (ShortCut.png 참고)
 - [x] GitHub 이슈 등록
-- [ ] 커밋 및 푸시
-- [ ] GitHub 이슈 업데이트
+- [x] 커밋 및 푸시
+- [x] GitHub 이슈 업데이트
