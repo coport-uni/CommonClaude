@@ -98,6 +98,8 @@ All debug, exploratory, and throwaway test scripts must be saved in `claude_test
 
 ## 3. Task Management
 
+> **MANDATORY**: This workflow applies to **every task without exception**, regardless of size or complexity. No task may begin without writing `ToDo.md` and creating a GitHub issue via `gh`. Skipping any step is not allowed.
+
 ### Rules
 
 1. **Write ToDo.md**: For every task requested by the user, create a `ToDo.md` file and confirm the contents with the user before starting work.
@@ -125,6 +127,8 @@ Before writing ToDo.md, the following two checks must be performed:
 5. Check off completed items in `ToDo.md` as work progresses.
 6. Update the GitHub issue via `gh issue edit` for completed items.
 7. **Commit and push** changes after every user command is completed.
+
+> **Reminder**: Steps 2 (`ToDo.md`) and 4 (`gh issue create`) are **non-negotiable**. Every task must have a corresponding `ToDo.md` entry and a GitHub issue before any work begins.
 
 ---
 
