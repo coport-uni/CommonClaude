@@ -120,6 +120,7 @@ All debug, exploratory, and throwaway test scripts must be saved in `claude_test
 4. 확인이 완료되면 `gh issue create` 명령으로 GitHub 이슈를 생성한다.
 5. 작업 진행 중 완료된 항목은 `ToDo.md`에서 체크 표시한다.
 6. 완료된 항목을 `gh issue edit` 명령으로 GitHub 이슈에도 업데이트한다.
+7. 사용자의 명령이 완료될 때마다 변경 사항을 **커밋하고 푸시**한다.
 
 ---
 
