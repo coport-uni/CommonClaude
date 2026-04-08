@@ -101,7 +101,8 @@ All debug, exploratory, and throwaway test scripts must be saved in `claude_test
 ### Rules
 
 1. **Write ToDo.md**: For every task requested by the user, create a `ToDo.md` file and confirm the contents with the user before starting work.
-2. **Register GitHub issues**: When possible, use the `gh` CLI to register the Todo list and details as a GitHub issue.
+2. **Accumulate ToDo.md**: Do not overwrite previous entries in `ToDo.md`. Always **append** new tasks below existing ones so that the file serves as a cumulative command history for Claude's actions.
+3. **Register GitHub issues**: When possible, use the `gh` CLI to register the Todo list and details as a GitHub issue.
 
 ### Command Input Validation
 
