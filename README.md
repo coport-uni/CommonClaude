@@ -70,6 +70,23 @@ Review this entire codebase ultrathink
 
 ---
 
+## Automated Enforcement (Hooks)
+
+This repository uses [Claude Code hooks](https://code.claude.com/docs/en/hooks) to automatically enforce the conventions above. Hooks run on every tool call matching their event and either block the action or feed errors back to Claude for self-correction.
+
+| Hook Script | Event | Rule Enforced | Behavior |
+|---|---|---|---|
+| [`pre-write-guard.sh`](.claude/hooks/pre-write-guard.sh) | PreToolUse (Write/Edit) | §2 Debug File Management | **Blocks** writing `debug_*`, `scratch_*`, `tmp_*`, `experiment_*` files into `tests/` |
+| [`post-write-lint.sh`](.claude/hooks/post-write-lint.sh) | PostToolUse (Write/Edit) | §5 Linting | Runs `ruff check` + `ruff format --check` on every Python file write; **feeds errors back** to Claude |
+| [`post-write-debug-remind.sh`](.claude/hooks/post-write-debug-remind.sh) | PostToolUse (Write/Edit) | §2 Debug File Management | Reminds to update `claude_test/README.md` when adding files to `claude_test/` |
+| Stop prompt hook | Stop | §3 Task Management | Verifies that `ToDo.md` has an entry and a GitHub issue exists before Claude finishes |
+
+Configuration lives in [`.claude/settings.json`](.claude/settings.json), and the linter is configured by [`ruff.toml`](ruff.toml) (80-column, 4-space, rules `E/F/W/I/N`).
+
+**Not enforced via hooks** (kept in `CLAUDE.md` as instructions): comment quality, English-only rule, magic-number/hardcoding rules, and command input validation — these require human judgment.
+
+---
+
 ## Claude Code IDE Commands
 
 | Command            | Description                                         |
@@ -79,6 +96,7 @@ Review this entire codebase ultrathink
 | `/memory`          | Adds specific content to memory.                    |
 | `/permission`      | Configures permissions for Bash, Edit, Write, etc.  |
 | `/review`          | Checks the current session's context cost.          |
+| `/output-style`    | Switches the output style (Default, Explanatory, Learning) or applies a custom style. |
 
 ---
 
