@@ -221,6 +221,10 @@ Rationale: `claude_test/` is a scratch area for one-off diagnostics where strict
 
 Exploratory or analysis scripts (typically under `claude_test/`) may use numeric literals directly, provided the file opens with a short intent comment explaining purpose and expected lifetime. This waiver does not apply to code under `tests/` or to production modules.
 
+### `ToDo.md` checkbox updates
+
+Marking completion checkboxes in `ToDo.md` (flipping `- [ ]` to `- [x]`, or appending a commit hash or issue link to a completed line) is permitted. The append-only rule in §4 Task Management Rule 2 and the "do not modify `ToDo.md`" constraint in §10 Learned Patterns Bootstrap forbid prose rewrites, reordering of entries, and deletion of historical items — not progress marking.
+
 ---
 
 ## 9. Learned Patterns Reference

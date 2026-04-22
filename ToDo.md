@@ -294,3 +294,22 @@ issue #18. No file change until the diff preview is approved.
       §1 Language rule -> §2 Language rule)
 - [x] Commit and push (b2a39a1)
 - [x] GitHub issue update (#18 closed)
+
+---
+
+## CLAUDE.md §8 — ToDo.md checkbox update exception
+
+### Background
+User direction 2026-04-22: the append-only rule in §4 Task
+Management Rule 2 and the "do not modify ToDo.md" constraint in
+§10 Learned Patterns Bootstrap were written to preserve history,
+not to prohibit progress marking. Every task-completion step
+flips a `[ ]` to `[x]`; this behavior needs an explicit carve-out
+so future sessions do not misread the rule. Tracked under issue
+#20.
+
+### Work items
+- [x] Add `ToDo.md checkbox updates` subsection under §8
+- [x] GitHub issue register (#20)
+- [ ] Commit and push
+- [ ] GitHub issue update
