@@ -292,5 +292,5 @@ issue #18. No file change until the diff preview is approved.
 - [x] Update internal cross-references (§1 Structure ->
       §2 Structure; §1 Documentation -> §2 Documentation;
       §1 Language rule -> §2 Language rule)
-- [ ] Commit and push
-- [ ] GitHub issue update
+- [x] Commit and push (b2a39a1)
+- [x] GitHub issue update (#18 closed)
