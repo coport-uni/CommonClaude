@@ -16,14 +16,13 @@ This project runs inside a **Docker container** with [Claude Code](https://claud
 | OS                | Ubuntu 24.04 (Noble)                            |
 | Dev tool          | Claude Code (CLI / VS Code extension)           |
 
-## Priority
+## 1. Rule Priority
 
-> Project-level `CLAUDE.md` files override this global ruleset.
-> Specific rules beat general ones.
+Project-level `CLAUDE.md` files take precedence over this global ruleset. Specific rules beat general ones. When a conflict arises, the more-specific context wins.
 
 ---
 
-## 1. MIT Code Convention
+## 2. MIT Code Convention
 
 All code follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.mit.edu/broad/commkit/coding-and-comment-style/).
 
@@ -80,7 +79,7 @@ All code follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.m
 
 ---
 
-## 2. Debug File Management
+## 3. Debug File Management
 
 All debug, exploratory, and throwaway test scripts must be saved in `claude_test/`, **not** in `tests/`.
 
@@ -101,18 +100,9 @@ All debug, exploratory, and throwaway test scripts must be saved in `claude_test
 
 `claude_test/README.md` is the index. When adding a new debug file, add a row to the table in that README describing what the file does and what was learned.
 
-### Exceptions
-
-Scripts inside `claude_test/` are exempt from:
-
-- The 80-column line limit (§1 Structure).
-- Mandatory docstrings on public functions and classes (§1 Documentation).
-
-These waivers exist because `claude_test/` is a scratch area for one-off diagnostics where strict readability conventions slow exploration. Anything later promoted into `tests/` must conform fully.
-
 ---
 
-## 3. Task Management
+## 4. Task Management
 
 > **MANDATORY**: This workflow applies to **every task without exception**, regardless of size or complexity. No task may begin without writing `ToDo.md` and creating a GitHub issue via `gh`. Skipping any step is not allowed.
 
@@ -148,7 +138,7 @@ Before writing ToDo.md, the following two checks must be performed:
 
 ---
 
-## 4. Testing Rules
+## 5. Testing Rules
 
 Tests exist to verify the **correctness and quality** of code. Code quality must never be sacrificed just to pass tests.
 
@@ -184,13 +174,9 @@ Tests exist to verify the **correctness and quality** of code. Code quality must
 
 3. **Code quality first**: Prioritize readability, maintainability, and correctness over whether tests pass. If a test fails, fix the logic correctly rather than tricking the test.
 
-### Exceptions
-
-One-off exploratory scripts (typically under `claude_test/`) may use numeric literals directly, provided the file opens with a short intent comment explaining purpose and expected lifetime. This exception does not apply to code under `tests/` or to production modules.
-
 ---
 
-## 5. Linting
+## 6. Linting
 
 All Python code must pass **Ruff** checks before committing.
 
@@ -206,7 +192,7 @@ All Python code must pass **Ruff** checks before committing.
 
 ---
 
-## 6. Research Before Coding
+## 7. Research Before Coding
 
 Before calling into an unfamiliar library, API, or CLI, verify its actual interface rather than guessing from memory.
 
@@ -218,7 +204,42 @@ Before calling into an unfamiliar library, API, or CLI, verify its actual interf
 
 ---
 
-## 7. Learned Patterns Bootstrap
+## 8. Exceptions
+
+The rules above are written for production code and CI tests. The following contexts receive formal waivers.
+
+### `claude_test/` scripts
+
+Scripts inside `claude_test/` are exempt from:
+
+- The 80-column line limit (§2 Structure).
+- Mandatory docstrings on public functions and classes (§2 Documentation).
+
+Rationale: `claude_test/` is a scratch area for one-off diagnostics where strict readability conventions slow exploration. Anything later promoted into `tests/` must conform fully.
+
+### One-off exploratory analysis
+
+Exploratory or analysis scripts (typically under `claude_test/`) may use numeric literals directly, provided the file opens with a short intent comment explaining purpose and expected lifetime. This waiver does not apply to code under `tests/` or to production modules.
+
+---
+
+## 9. Learned Patterns Reference
+
+When `LearnedPatterns.md` exists, treat it as part of the workflow. The file captures lessons from past work so they can be reused rather than rediscovered.
+
+### Rules
+
+1. **Before drafting `ToDo.md`**, read the sections of `LearnedPatterns.md` relevant to the new task. Relevance can be filtered by library, environment, or the general problem domain.
+2. **Reference applicable patterns in the ToDo entry** using `(see LP §X)` where `X` is the section of `LearnedPatterns.md` being cited. Example:
+   ```
+   - [ ] Connect to device over serial (see LP §3)
+   ```
+3. **After the task completes**, if a new recurring issue, gotcha, library quirk, workflow lesson, or environment-specific note surfaced, append it to the correct section of `LearnedPatterns.md`. Use the Problem / Cause / Fix / Rule format specified in §10 Learned Patterns Bootstrap.
+4. **Promote stable patterns**: entries in `LearnedPatterns.md` that stabilize across many tasks should be lifted into a formal rule inside this `CLAUDE.md`. Remove the promoted entry from `LearnedPatterns.md` to avoid duplication.
+
+---
+
+## 10. Learned Patterns Bootstrap
 
 If `LearnedPatterns.md` does not exist in the repository root, generate it by analyzing the `Completed` items in `ToDo.md` using the procedure below. Once the file exists, this bootstrap procedure no longer applies — consult the file directly.
 
@@ -244,4 +265,4 @@ If `LearnedPatterns.md` does not exist in the repository root, generate it by an
 - **Do not modify `ToDo.md`.** It is append-only; edits happen only in `LearnedPatterns.md`.
 - **Create `LearnedPatterns.md` as a new file** in the repository root. Do not inline patterns into `ToDo.md` or `CLAUDE.md`.
 - **Do not invent patterns.** When a ToDo item is ambiguous, place it under §99 rather than guessing.
-- **Write all content in English**, consistent with §1 Language rule.
+- **Write all content in English**, consistent with §2 Language rule.

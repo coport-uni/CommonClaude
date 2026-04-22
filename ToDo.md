@@ -285,11 +285,12 @@ issue #18. No file change until the diff preview is approved.
 ### Work items
 - [x] Draft proposed numbering map and new-section text
 - [x] GitHub issue register (#18)
-- [ ] **[APPROVAL]** User reviews proposal before any CLAUDE.md edit
-- [ ] Apply restructure (renumber §1-§7, add §1 Rule Priority,
+- [x] **[APPROVAL]** User approved 2026-04-22
+- [x] Apply restructure (renumber §1-§7, add §1 Rule Priority,
       add §8 Exceptions, add §9 Learned Patterns Reference,
       move former §7 to §10 Learned Patterns Bootstrap)
-- [ ] Update internal cross-references (e.g. "§1 Structure"
-      becomes "§2 Structure")
+- [x] Update internal cross-references (§1 Structure ->
+      §2 Structure; §1 Documentation -> §2 Documentation;
+      §1 Language rule -> §2 Language rule)
 - [ ] Commit and push
 - [ ] GitHub issue update
