@@ -102,26 +102,28 @@ not a discrete task here.
 
 ### Task 1. Restructure CLAUDE.md rule layer
 Risk: low. Rollback: `git revert`.
-- [ ] Add priority-override statement near the top of CLAUDE.md
+Bundled with Tasks 2 and 4 under issue #14 per user decision.
+- [x] Add priority-override statement near the top of CLAUDE.md
       ("Project-level CLAUDE.md rules override this global file")
-- [ ] Add Exceptions subsection under §2 Debug Files (waive 80-col
+- [x] Add Exceptions subsection under §2 Debug Files (waive 80-col
       and docstring requirements inside `claude_test/`)
-- [ ] Add Exceptions subsection under §4 Testing (allow magic
+- [x] Add Exceptions subsection under §4 Testing (allow magic
       numbers in one-off exploratory scripts when intent comment
       is present at file top)
-- [ ] **[APPROVAL]** Show diff; wait for user sign-off
-- [ ] GitHub issue register and cross-link
+- [x] **[APPROVAL]** Bundled approval granted 2026-04-22
+- [x] GitHub issue register and cross-link (#14)
 - [ ] Commit and push
 - [ ] GitHub issue update
 
 ### Task 2. Add token-optimization env vars
 Risk: low. Rollback: `git revert`.
-- [ ] Add `env` block to `.claude/settings.json` with
-      `MAX_THINKING_TOKENS` and `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`
-- [ ] Verify existing `hooks` block is untouched
-- [ ] **[APPROVAL]** Confirm concrete values with user (Concept.md
-      suggests 10000 and 50)
-- [ ] GitHub issue register
+Bundled with Tasks 1 and 4 under issue #14 per user decision.
+- [x] Add `env` block to `.claude/settings.json` with
+      `MAX_THINKING_TOKENS=10000` and
+      `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50`
+- [x] Verify existing `hooks` block is untouched
+- [x] **[APPROVAL]** Values confirmed as-is per user 2026-04-22
+- [x] GitHub issue register (#14)
 - [ ] Commit and push
 - [ ] GitHub issue update
 
@@ -134,11 +136,12 @@ config is introduced. This task closes without file changes.
 
 ### Task 4. Add Search-first section to CLAUDE.md
 Risk: low. Rollback: `git revert`.
-- [ ] Draft a new §6 "Research Before Coding" covering doc lookup,
+Bundled with Tasks 1 and 2 under issue #14 per user decision.
+- [x] Draft a new §6 "Research Before Coding" covering doc lookup,
       prior-implementation search, and the rule against guessing
       APIs from memory
-- [ ] **[APPROVAL]** Show draft wording
-- [ ] GitHub issue register
+- [x] **[APPROVAL]** Bundled approval granted 2026-04-22
+- [x] GitHub issue register (#14)
 - [ ] Commit and push
 - [ ] GitHub issue update
 

@@ -16,6 +16,13 @@ This project runs inside a **Docker container** with [Claude Code](https://claud
 | OS                | Ubuntu 24.04 (Noble)                            |
 | Dev tool          | Claude Code (CLI / VS Code extension)           |
 
+## Priority
+
+> Project-level `CLAUDE.md` files override this global ruleset.
+> Specific rules beat general ones.
+
+---
+
 ## 1. MIT Code Convention
 
 All code follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.mit.edu/broad/commkit/coding-and-comment-style/).
@@ -94,6 +101,15 @@ All debug, exploratory, and throwaway test scripts must be saved in `claude_test
 
 `claude_test/README.md` is the index. When adding a new debug file, add a row to the table in that README describing what the file does and what was learned.
 
+### Exceptions
+
+Scripts inside `claude_test/` are exempt from:
+
+- The 80-column line limit (§1 Structure).
+- Mandatory docstrings on public functions and classes (§1 Documentation).
+
+These waivers exist because `claude_test/` is a scratch area for one-off diagnostics where strict readability conventions slow exploration. Anything later promoted into `tests/` must conform fully.
+
 ---
 
 ## 3. Task Management
@@ -168,6 +184,10 @@ Tests exist to verify the **correctness and quality** of code. Code quality must
 
 3. **Code quality first**: Prioritize readability, maintainability, and correctness over whether tests pass. If a test fails, fix the logic correctly rather than tricking the test.
 
+### Exceptions
+
+One-off exploratory scripts (typically under `claude_test/`) may use numeric literals directly, provided the file opens with a short intent comment explaining purpose and expected lifetime. This exception does not apply to code under `tests/` or to production modules.
+
 ---
 
 ## 5. Linting
@@ -183,3 +203,15 @@ All Python code must pass **Ruff** checks before committing.
    ruff format --check <file>.py
    ```
 3. **Fix before committing**: If either command reports errors, fix them before proceeding. Use `ruff format <file>.py` to auto-format.
+
+---
+
+## 6. Research Before Coding
+
+Before calling into an unfamiliar library, API, or CLI, verify its actual interface rather than guessing from memory.
+
+### Rules
+
+1. **Consult official documentation first** via Context7 MCP or web search.
+2. **Search the repository** for prior implementations before writing new code against the same interface.
+3. **Trust documentation over intuition**: when the docs disagree with the mental model, update the mental model.
