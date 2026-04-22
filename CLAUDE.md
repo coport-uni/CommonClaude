@@ -215,3 +215,33 @@ Before calling into an unfamiliar library, API, or CLI, verify its actual interf
 1. **Consult official documentation first** via Context7 MCP or web search.
 2. **Search the repository** for prior implementations before writing new code against the same interface.
 3. **Trust documentation over intuition**: when the docs disagree with the mental model, update the mental model.
+
+---
+
+## 7. Learned Patterns Bootstrap
+
+If `LearnedPatterns.md` does not exist in the repository root, generate it by analyzing the `Completed` items in `ToDo.md` using the procedure below. Once the file exists, this bootstrap procedure no longer applies — consult the file directly.
+
+### Procedure
+
+1. Read every `[x]` item across all sections in `ToDo.md`.
+2. Classify each item into exactly one of the following categories:
+   - **§1. Recurring Issues** — the same or a similar problem appeared **two or more times**.
+   - **§2. Solved Gotchas** — a one-time trap with a credible chance of recurring.
+   - **§3. Library Quirks** — hidden or surprising behavior of a specific library or tool.
+   - **§4. Workflow Lessons** — lessons learned about the development or collaboration process itself.
+   - **§5. Environment Specifics** — Docker, Ubuntu, or hardware-specific notes.
+3. Items that do not cleanly fit any category go into **§99. Uncategorized**. Do **not** discard them.
+4. For each entry, record four single-line fields:
+   - **Problem**: what went wrong.
+   - **Cause**: the underlying reason.
+   - **Fix**: the specific change that resolved it.
+   - **Rule**: a short general directive in `Always ...` or `Never ...` form.
+5. Append `(from ToDo#N)` at the end of each entry, where `N` identifies the source ToDo item, so the original record can be recovered on later review.
+
+### Constraints
+
+- **Do not modify `ToDo.md`.** It is append-only; edits happen only in `LearnedPatterns.md`.
+- **Create `LearnedPatterns.md` as a new file** in the repository root. Do not inline patterns into `ToDo.md` or `CLAUDE.md`.
+- **Do not invent patterns.** When a ToDo item is ambiguous, place it under §99 rather than guessing.
+- **Write all content in English**, consistent with §1 Language rule.

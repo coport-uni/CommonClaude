@@ -244,3 +244,28 @@ Bash pattern set finalized as: `sk-`, `ghp_`, `gho_`, `ghu_`, `ghs_`,
 generic literal assignments `password=`, `api_key=`, `access_token=`,
 `secret_key=`, `auth_token=`. Expanded beyond the original five per
 user direction "암호 뿐만 아니라 API 키도 거부하도록".
+
+---
+
+## CLAUDE.md §7 — Learned Patterns Bootstrap rule
+
+### Background
+Splits Task 6 of the umbrella plan (#13) into Part A (rule) and
+Part B (generate the file). User directed adding the bootstrap
+procedure to `CLAUDE.md` now, so future sessions know how to
+generate `LearnedPatterns.md` from `ToDo.md` when it is absent.
+Tracked under issue #17.
+
+### Rule outline
+- Classify `[x]` items into §1-§5 plus §99 fallback.
+- Each entry: Problem / Cause / Fix / Rule (one-liner each).
+- Append `(from ToDo#N)` for traceability.
+- `ToDo.md` stays append-only; `LearnedPatterns.md` is a new
+  file in repo root; content in English; ambiguous items go
+  to §99 rather than being guessed.
+
+### Work items
+- [x] Add §7 "Learned Patterns Bootstrap" to `CLAUDE.md`
+- [x] GitHub issue register (#17)
+- [ ] Commit and push
+- [ ] GitHub issue update
