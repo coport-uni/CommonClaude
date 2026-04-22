@@ -267,5 +267,29 @@ Tracked under issue #17.
 ### Work items
 - [x] Add §7 "Learned Patterns Bootstrap" to `CLAUDE.md`
 - [x] GitHub issue register (#17)
+- [x] Commit and push (4628a61)
+- [x] GitHub issue update (#17 closed)
+
+---
+
+## CLAUDE.md restructure — Rule Priority, Exceptions, Learned Patterns Reference
+
+### Background
+User direction 2026-04-22: promote the existing `## Priority`
+subsection and the two `### Exceptions` subsections to proper
+numbered top-level sections, and add a new `Learned Patterns
+Reference` section (distinct from the generation-rule §7
+`Learned Patterns Bootstrap` that just landed). Tracked under
+issue #18. No file change until the diff preview is approved.
+
+### Work items
+- [x] Draft proposed numbering map and new-section text
+- [x] GitHub issue register (#18)
+- [ ] **[APPROVAL]** User reviews proposal before any CLAUDE.md edit
+- [ ] Apply restructure (renumber §1-§7, add §1 Rule Priority,
+      add §8 Exceptions, add §9 Learned Patterns Reference,
+      move former §7 to §10 Learned Patterns Bootstrap)
+- [ ] Update internal cross-references (e.g. "§1 Structure"
+      becomes "§2 Structure")
 - [ ] Commit and push
 - [ ] GitHub issue update
