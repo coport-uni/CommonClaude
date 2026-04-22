@@ -112,8 +112,8 @@ Bundled with Tasks 2 and 4 under issue #14 per user decision.
       is present at file top)
 - [x] **[APPROVAL]** Bundled approval granted 2026-04-22
 - [x] GitHub issue register and cross-link (#14)
-- [ ] Commit and push
-- [ ] GitHub issue update
+- [x] Commit and push (aa15cb9)
+- [x] GitHub issue update (#14 closed)
 
 ### Task 2. Add token-optimization env vars
 Risk: low. Rollback: `git revert`.
@@ -124,8 +124,8 @@ Bundled with Tasks 1 and 4 under issue #14 per user decision.
 - [x] Verify existing `hooks` block is untouched
 - [x] **[APPROVAL]** Values confirmed as-is per user 2026-04-22
 - [x] GitHub issue register (#14)
-- [ ] Commit and push
-- [ ] GitHub issue update
+- [x] Commit and push (aa15cb9)
+- [x] GitHub issue update (#14 closed)
 
 ### Task 3. MCP reconfiguration decision
 Risk: low (decision only). Rollback: n/a (no repo change).
@@ -142,8 +142,8 @@ Bundled with Tasks 1 and 2 under issue #14 per user decision.
       APIs from memory
 - [x] **[APPROVAL]** Bundled approval granted 2026-04-22
 - [x] GitHub issue register (#14)
-- [ ] Commit and push
-- [ ] GitHub issue update
+- [x] Commit and push (aa15cb9)
+- [x] GitHub issue update (#14 closed)
 
 ### Task 5. Phase 0-1 diagnosis and (abridged) pattern extraction
 Risk: low. Rollback: discard draft file.
@@ -197,5 +197,6 @@ Rollback: disable in `settings.json` + `git revert` scripts.
 
 ### Meta-task checklist (this drafting session)
 - [x] GitHub umbrella issue registered (#13)
-- [ ] Commit and push draft
-- [ ] GitHub issue updated once user approves the plan
+- [x] Commit and push draft (84d99f5)
+- [x] User approved plan; Tasks 1+2+4 bundle executed in aa15cb9
+- [x] Umbrella issue updated to reflect bundle closure
