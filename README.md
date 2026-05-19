@@ -22,18 +22,19 @@ This repository defines the rules and workflows that every [Claude Code](https:/
 
 Follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.mit.edu/broad/commkit/coding-and-comment-style/).
 
-| Element  | Style        | Example            |
-|----------|--------------|--------------------|
-| Variable | `lower_case` | `joint_angle`      |
-| Function | `lower_case` | `send_action`      |
-| Class    | `CamelCase`  | `FairinoFollower`  |
-| Constant | `lower_case` | `_settle_mid_s`    |
-| Module   | `lowercase`  | `fairino_follower`  |
+| Element  | Style                | Example                          |
+|----------|----------------------|----------------------------------|
+| Variable | `snake_case`         | `joint_angle`                    |
+| Function | `snake_case`         | `send_action`                    |
+| Type     | `PascalCase` / `_t`  | `RobotState` / `robot_state_t`   |
+| Macro    | `UPPER_SNAKE_CASE`   | `MAX_BUFFER_SIZE`                |
+| Constant | `UPPER_SNAKE_CASE`   | `SETTLE_MID_MS`                  |
+| File     | `lower_snake`        | `robot_state.c`, `robot_state.h` |
 
 - 80-column limit, 4-space indentation
-- Google-style docstrings required (`Args:`, `Returns:`, `Raises:`)
-- All comments, docstrings, and documentation must be in **English**
-- TODO format: `# TODO: (@owner) description`
+- Doxygen comment blocks on public functions and types (`@brief`, `@param`, `@return`)
+- All comments and documentation must be in **English**
+- TODO format: `/* TODO: (@owner) description */`
 
 ### 2. Debug File Management
 
@@ -77,11 +78,11 @@ This repository uses [Claude Code hooks](https://code.claude.com/docs/en/hooks) 
 | Hook Script | Event | Rule Enforced | Behavior |
 |---|---|---|---|
 | [`pre-write-guard.sh`](.claude/hooks/pre-write-guard.sh) | PreToolUse (Write/Edit) | §2 Debug File Management | **Blocks** writing `debug_*`, `scratch_*`, `tmp_*`, `experiment_*` files into `tests/` |
-| [`post-write-lint.sh`](.claude/hooks/post-write-lint.sh) | PostToolUse (Write/Edit) | §5 Linting | Runs `ruff check` + `ruff format --check` on every Python file write; **feeds errors back** to Claude |
+| [`post-write-lint.sh`](.claude/hooks/post-write-lint.sh) | PostToolUse (Write/Edit) | §6 Linting | Runs `clang-format --dry-run --Werror` + `cppcheck` on every C file write; **feeds errors back** to Claude (hook script rewire pending) |
 | [`post-write-debug-remind.sh`](.claude/hooks/post-write-debug-remind.sh) | PostToolUse (Write/Edit) | §2 Debug File Management | Reminds to update `claude_test/README.md` when adding files to `claude_test/` |
 | Stop prompt hook | Stop | §3 Task Management | Verifies that `ToDo.md` has an entry and a GitHub issue exists before Claude finishes |
 
-Configuration lives in [`.claude/settings.json`](.claude/settings.json), and the linter is configured by [`ruff.toml`](ruff.toml) (80-column, 4-space, rules `E/F/W/I/N`).
+Configuration lives in [`.claude/settings.json`](.claude/settings.json), and the formatter is configured by [`.clang-format`](.clang-format) (LLVM base, 80-column, 4-space indent).
 
 **Not enforced via hooks** (kept in `CLAUDE.md` as instructions): comment quality, English-only rule, magic-number/hardcoding rules, and command input validation — these require human judgment.
 
