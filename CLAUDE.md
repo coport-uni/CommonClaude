@@ -32,15 +32,16 @@ All code follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.m
 - Names must be pronounceable and straightforward.
 - Name length is proportional to scope: short for local, descriptive for broad.
 - Avoid abbreviations unless self-explanatory. If unavoidable, define them in a comment block.
-- Python conventions:
+- C conventions:
 
-| Element    | Style        | Example               |
-|------------|--------------|-----------------------|
-| Variable   | `lower_case` | `joint_angle`         |
-| Function   | `lower_case` | `send_action`         |
-| Class      | `CamelCase`  | `FairinoFollower`     |
-| Constant   | `lower_case` | `_settle_mid_s`       |
-| Module     | `lowercase`  | `fairino_follower`    |
+| Element  | Style                | Example                          |
+|----------|----------------------|----------------------------------|
+| Variable | `snake_case`         | `joint_angle`                    |
+| Function | `snake_case`         | `send_action`                    |
+| Type     | `PascalCase` / `_t`  | `RobotState` / `robot_state_t`   |
+| Macro    | `UPPER_SNAKE_CASE`   | `MAX_BUFFER_SIZE`                |
+| Constant | `UPPER_SNAKE_CASE`   | `SETTLE_MID_MS`                  |
+| File     | `lower_snake`        | `robot_state.c`, `robot_state.h` |
 
 ### Structure
 
@@ -62,9 +63,10 @@ All code follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.m
 - Only comment for **context** or **non-obvious choices**. Never restate what the code already says.
 - Outdated comments are worse than none. Keep them current or delete them.
 - TODO format:
-  ```python
-  # TODO: (@owner) Implement 2-step predictor-corrector
-  # for stability. Adams-Bashforth causes shocks.
+  ```c
+  /* TODO: (@owner) Implement 2-step predictor-corrector
+   * for stability. Adams-Bashforth causes shocks.
+   */
   ```
 
 ### Language
@@ -73,9 +75,9 @@ All code follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.m
 
 ### Documentation
 
-- All public functions and classes must have **docstrings** (PEP 257 / Google style).
-- A docstring states **what** and **why**, not **how**.
-- Include `Args:`, `Returns:`, and `Raises:` sections when applicable.
+- All public functions and types must have **Doxygen comment blocks** (`/** ... */`).
+- A Doxygen block states **what** and **why**, not **how**.
+- Include `@brief`, `@param`, and `@return` tags when applicable.
 
 ---
 
@@ -92,8 +94,8 @@ All debug, exploratory, and throwaway test scripts must be saved in `claude_test
 
 ### When writing debug code
 
-1. Create the file directly in `claude_test/` (e.g., `claude_test/debug_servo_timing.py`).
-2. Add a one-line docstring at the top explaining the purpose.
+1. Create the file directly in `claude_test/` (e.g., `claude_test/debug_servo_timing.c`).
+2. Add a one-line comment at the top explaining the purpose.
 3. If the debug script leads to a real fix, move the relevant parts into a proper test under `tests/` and delete or archive the debug version.
 
 ### README
@@ -148,31 +150,33 @@ Tests exist to verify the **correctness and quality** of code. Code quality must
 ### Rules
 
 1. **No magic numbers**: Do not use arbitrary numbers or values directly to pass tests. All values must be defined as meaningful constants or variables.
-   ```python
-   # Bad: passing tests with magic numbers
-   def calculate_area(radius):
-       return 3.14 * radius * radius  # Why 3.14?
+   ```c
+   /* Bad: passing tests with magic numbers */
+   double calculate_area(double radius) {
+       return 3.14 * radius * radius;  /* Why 3.14? */
+   }
 
-   # Good: use meaningful constants
-   import math
+   /* Good: use meaningful constants */
+   #include <math.h>
 
-   def calculate_area(radius):
-       return math.pi * radius * radius
+   double calculate_area(double radius) {
+       return M_PI * radius * radius;
+   }
    ```
 
 2. **No hardcoding**: Do not hardcode values to match expected test results. Code must work through correct logic, not through branches or fixed values tailored to specific inputs.
-   ```python
-   # Bad: hardcoded to match test inputs
-   def convert_temperature(celsius):
-       if celsius == 100:
-           return 212
-       if celsius == 0:
-           return 32
-       return celsius * 1.8 + 32
+   ```c
+   /* Bad: hardcoded to match test inputs */
+   double convert_temperature(double celsius) {
+       if (celsius == 100.0) return 212.0;
+       if (celsius == 0.0)   return 32.0;
+       return celsius * 1.8 + 32.0;
+   }
 
-   # Good: correct logic implementation
-   def convert_temperature(celsius):
-       return celsius * 1.8 + 32
+   /* Good: correct logic implementation */
+   double convert_temperature(double celsius) {
+       return celsius * 1.8 + 32.0;
+   }
    ```
 
 3. **Code quality first**: Prioritize readability, maintainability, and correctness over whether tests pass. If a test fails, fix the logic correctly rather than tricking the test.
@@ -181,17 +185,17 @@ Tests exist to verify the **correctness and quality** of code. Code quality must
 
 ## 6. Linting
 
-All Python code must pass **Ruff** checks before committing.
+All C code must pass **clang-format** and **cppcheck** before committing.
 
 ### Rules
 
-1. **Line length**: 80 columns (`line-length = 80` in `ruff.toml`).
+1. **Line length**: 80 columns (`ColumnLimit: 80` in `.clang-format`).
 2. **Run on every commit**: Before committing, run:
    ```bash
-   ruff check <file>.py
-   ruff format --check <file>.py
+   clang-format --dry-run --Werror <file>.c <file>.h
+   cppcheck --enable=warning,style --error-exitcode=1 <file>.c
    ```
-3. **Fix before committing**: If either command reports errors, fix them before proceeding. Use `ruff format <file>.py` to auto-format.
+3. **Fix before committing**: If either command reports errors, fix them before proceeding. Use `clang-format -i <file>.c <file>.h` to auto-format.
 
 ---
 
@@ -216,7 +220,7 @@ The rules above are written for production code and CI tests. The following cont
 Scripts inside `claude_test/` are exempt from:
 
 - The 80-column line limit (§2 Structure).
-- Mandatory docstrings on public functions and classes (§2 Documentation).
+- Mandatory Doxygen blocks on public functions and types (§2 Documentation).
 
 Rationale: `claude_test/` is a scratch area for one-off diagnostics where strict readability conventions slow exploration. Anything later promoted into `tests/` must conform fully.
 
@@ -315,10 +319,10 @@ Follow the **Conventional Commits** specification. The English-only rule for com
 ### 11.4 Examples
 
 ```
-feat(parser): add JSON config loader in Python
+feat(parser): add JSON config loader in C
 
 Adds JSON format support alongside the existing INI files.
-Uses only the standard library — no external dependencies.
+Uses only the C standard library — no external dependencies.
 ```
 
 ```
@@ -401,38 +405,28 @@ git branch -d feature/csv-parser
 
 ## 13. .gitignore
 
-Cover both C and Python. Combine GitHub's official templates.
+Cover C build artifacts plus standard editor and OS files. Use GitHub's official C template as a base.
 
 ### 13.1 Base Template
 
 ```gitignore
 # ===== C =====
 *.o
+*.obj
 *.a
+*.lib
 *.so
 *.dylib
+*.dll
 *.exe
 *.out
 *.app
 *.dSYM/
+*.gch
+*.pch
+*.d
 build/
 bin/
-
-# ===== Python =====
-__pycache__/
-*.py[cod]
-*$py.class
-.Python
-.venv/
-venv/
-env/
-*.egg-info/
-dist/
-.pytest_cache/
-.coverage
-htmlcov/
-.mypy_cache/
-.ruff_cache/
 
 # ===== Editor / OS =====
 .vscode/
@@ -457,9 +451,7 @@ Keep OS/editor-specific files in a personal `~/.gitignore_global`:
 git config --global core.excludesfile ~/.gitignore_global
 ```
 
-> **Sources**:
-> - [GitHub Official .gitignore Template (C)](https://github.com/github/gitignore/blob/main/C.gitignore)
-> - [GitHub Official .gitignore Template (Python)](https://github.com/github/gitignore/blob/main/Python.gitignore)
+> **Source**: [GitHub Official .gitignore Template (C)](https://github.com/github/gitignore/blob/main/C.gitignore)
 
 ---
 
@@ -561,13 +553,6 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
-
-  # Python
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.0
-    hooks:
-      - id: ruff
-      - id: ruff-format
 
   # C
   - repo: https://github.com/pre-commit/mirrors-clang-format

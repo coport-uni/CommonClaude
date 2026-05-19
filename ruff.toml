@@ -1,9 +1,0 @@
-line-length = 80
-indent-width = 4
-
-[format]
-indent-style = "space"
-quote-style = "double"
-
-[lint]
-select = ["E", "F", "W", "I", "N"]
