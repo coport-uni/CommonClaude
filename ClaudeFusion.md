@@ -1,6 +1,6 @@
 # Fusion 360 작업 가이드라인
 
-Claude와 함께 Fusion 360 CAD 작업을 진행할 때 따라야 할 규칙입니다.
+Claude와 함께 Fusion 360 CAD 작업을 진행할 때 따라야 할 규칙이다.
 
 ---
 
