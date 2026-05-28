@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a conventions repository that defines project-wide standards for Claude Code sessions. The primary artifact is `CommonClaude.md`.
+This is a conventions repository that defines project-wide standards for Claude Code sessions on **Python** projects. The primary artifact is `CLAUDE.md`.
 
 ## Environment
 
@@ -31,17 +31,16 @@ All code follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.m
 - **Variables and classes** are nouns; **functions and methods** are verbs.
 - Names must be pronounceable and straightforward.
 - Name length is proportional to scope: short for local, descriptive for broad.
-- Avoid abbreviations unless self-explanatory. If unavoidable, define them in a comment block.
-- C conventions:
+- Avoid abbreviations unless self-explanatory. If unavoidable, define them in a comment.
+- Python conventions:
 
-| Element  | Style                | Example                          |
-|----------|----------------------|----------------------------------|
-| Variable | `snake_case`         | `joint_angle`                    |
-| Function | `snake_case`         | `send_action`                    |
-| Type     | `PascalCase` / `_t`  | `RobotState` / `robot_state_t`   |
-| Macro    | `UPPER_SNAKE_CASE`   | `MAX_BUFFER_SIZE`                |
-| Constant | `UPPER_SNAKE_CASE`   | `SETTLE_MID_MS`                  |
-| File     | `lower_snake`        | `robot_state.c`, `robot_state.h` |
+| Element  | Style        | Example            |
+|----------|--------------|--------------------|
+| Variable | `lower_case` | `joint_angle`      |
+| Function | `lower_case` | `send_action`      |
+| Class    | `CamelCase`  | `RobotState`       |
+| Constant | `lower_case` | `settle_mid_ms`    |
+| Module   | `lowercase`  | `robot_state`      |
 
 ### Structure
 
@@ -63,10 +62,9 @@ All code follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.m
 - Only comment for **context** or **non-obvious choices**. Never restate what the code already says.
 - Outdated comments are worse than none. Keep them current or delete them.
 - TODO format:
-  ```c
-  /* TODO: (@owner) Implement 2-step predictor-corrector
-   * for stability. Adams-Bashforth causes shocks.
-   */
+  ```python
+  # TODO: (@owner) Implement 2-step predictor-corrector
+  # for stability -- Adams-Bashforth causes shocks.
   ```
 
 ### Language
@@ -75,9 +73,31 @@ All code follows the [MIT CommLab Coding and Comment Style](https://mitcommlab.m
 
 ### Documentation
 
-- All public functions and types must have **Doxygen comment blocks** (`/** ... */`).
-- A Doxygen block states **what** and **why**, not **how**.
-- Include `@brief`, `@param`, and `@return` tags when applicable.
+- All public functions and classes must have **docstrings** following [PEP 257](https://peps.python.org/pep-0257/) (Google style recommended).
+- A docstring states **what** and **why**, not **how**.
+- Include `Args:`, `Returns:`, and `Raises:` sections when applicable.
+
+Example:
+```python
+def send_action(joint_pos: list[float]) -> dict:
+    """Stream a servo joint command to the robot.
+
+    The command is non-blocking and returns once the controller
+    acknowledges receipt -- it does not wait for motion to finish.
+
+    Args:
+        joint_pos: Six target joint angles in degrees, ordered
+            from base (J1) to flange (J6).
+
+    Returns:
+        Controller acknowledgement payload with keys
+        ``"errcode"`` and ``"timestamp"``.
+
+    Raises:
+        ConnectionError: If the controller socket has dropped.
+        ValueError: If ``joint_pos`` is not exactly six values.
+    """
+```
 
 ---
 
@@ -185,17 +205,17 @@ Tests exist to verify the **correctness and quality** of code. Code quality must
 
 ## 6. Linting
 
-All C code must pass **clang-format** and **cppcheck** before committing.
+All Python code must pass **Ruff** (linter and formatter) before committing.
 
 ### Rules
 
-1. **Line length**: 80 columns (`ColumnLimit: 80` in `.clang-format`).
+1. **Line length**: 80 columns (`line-length = 80` in `pyproject.toml` under `[tool.ruff]`).
 2. **Run on every commit**: Before committing, run:
    ```bash
-   clang-format --dry-run --Werror <file>.c <file>.h
-   cppcheck --enable=warning,style --error-exitcode=1 <file>.c
+   ruff check <file>.py
+   ruff format --check <file>.py
    ```
-3. **Fix before committing**: If either command reports errors, fix them before proceeding. Use `clang-format -i <file>.c <file>.h` to auto-format.
+3. **Fix before committing**: If either command reports errors, fix them before proceeding. Use `ruff check --fix <file>.py` and `ruff format <file>.py` to auto-format.
 
 ---
 
@@ -220,7 +240,7 @@ The rules above are written for production code and CI tests. The following cont
 Scripts inside `claude_test/` are exempt from:
 
 - The 80-column line limit (§2 Structure).
-- Mandatory Doxygen blocks on public functions and types (§2 Documentation).
+- Mandatory docstrings on public functions and classes (§2 Documentation).
 
 Rationale: `claude_test/` is a scratch area for one-off diagnostics where strict readability conventions slow exploration. Anything later promoted into `tests/` must conform fully.
 
@@ -319,18 +339,18 @@ Follow the **Conventional Commits** specification. The English-only rule for com
 ### 11.4 Examples
 
 ```
-feat(parser): add JSON config loader in C
+feat(parser): add JSON config loader
 
 Adds JSON format support alongside the existing INI files.
-Uses only the C standard library — no external dependencies.
+Uses only the Python standard library — no external dependencies.
 ```
 
 ```
-fix(core): prevent buffer overflow in tokenize()
+fix(core): prevent off-by-one in tokenize()
 ```
 
 ```
-chore(build): update Makefile for new module
+chore(build): update pyproject.toml for new module
 ```
 
 ### 11.5 Breaking Changes
@@ -405,28 +425,31 @@ git branch -d feature/csv-parser
 
 ## 13. .gitignore
 
-Cover C build artifacts plus standard editor and OS files. Use GitHub's official C template as a base.
+Cover Python build/cache artifacts plus standard editor and OS files. Use GitHub's official Python template as a base.
 
 ### 13.1 Base Template
 
 ```gitignore
-# ===== C =====
-*.o
-*.obj
-*.a
-*.lib
-*.so
-*.dylib
-*.dll
-*.exe
-*.out
-*.app
-*.dSYM/
-*.gch
-*.pch
-*.d
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.eggs/
 build/
-bin/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ===== Virtual environments =====
+.venv/
+venv/
+env/
 
 # ===== Editor / OS =====
 .vscode/
@@ -451,7 +474,7 @@ Keep OS/editor-specific files in a personal `~/.gitignore_global`:
 git config --global core.excludesfile ~/.gitignore_global
 ```
 
-> **Source**: [GitHub Official .gitignore Template (C)](https://github.com/github/gitignore/blob/main/C.gitignore)
+> **Source**: [GitHub Official .gitignore Template (Python)](https://github.com/github/gitignore/blob/main/Python.gitignore)
 
 ---
 
@@ -554,11 +577,13 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
 
-  # C
-  - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v18.1.0
+  # Python
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
     hooks:
-      - id: clang-format
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
 ```
 
 ### 16.3 Enable Hooks
