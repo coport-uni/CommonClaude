@@ -46,7 +46,38 @@ function Ensure-Winget {
 }
 #endregion
 
-#region Install helper (skips if already installed)
+#region Check for Chocolatey and install if missing
+function Ensure-Chocolatey {
+    if (Get-Command choco -ErrorAction SilentlyContinue) {
+        Write-Host "Chocolatey is already installed." -ForegroundColor Green
+        return
+    }
+
+    Write-Host "Chocolatey not found. Starting installation..." -ForegroundColor Yellow
+
+    try {
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        [System.Net.ServicePointManager]::SecurityProtocol = `
+            [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+        # Refresh PATH so 'choco' is available in this session
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+        if (Get-Command choco -ErrorAction SilentlyContinue) {
+            Write-Host "Chocolatey installation complete." -ForegroundColor Green
+        } else {
+            throw "choco command not found even after installation. Please restart PowerShell and run again."
+        }
+    }
+    catch {
+        Write-Host "Automatic Chocolatey installation failed: $_" -ForegroundColor Red
+        Write-Host "See https://chocolatey.org/install for manual installation steps." -ForegroundColor Red
+    }
+}
+#endregion
+
+#region winget install helper (skips if already installed)
 function Install-App {
     param(
         [string]$Id,
@@ -87,16 +118,54 @@ function Install-App {
 }
 #endregion
 
+#region Chocolatey install helper (skips if already installed)
+function Install-ChocoApp {
+    param(
+        [string]$Id,
+        [string]$Name
+    )
+
+    Write-Host "`n[$Name] Checking (Chocolatey)..." -ForegroundColor Cyan
+
+    if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+        Write-Host "  -> Chocolatey is not available, skipping [$Name]." -ForegroundColor Red
+        return
+    }
+
+    $installed = choco list --local-only --exact $Id --limit-output 2>$null | Select-String -SimpleMatch $Id
+    if ($installed) {
+        Write-Host "  -> Already installed, skipping." -ForegroundColor Yellow
+        return
+    }
+
+    Write-Host "  -> Starting installation..." -ForegroundColor Green
+    choco install $Id -y --no-progress
+    $code = $LASTEXITCODE
+
+    # Chocolatey exit codes: 0 = success, 3010 = success but reboot required
+    if ($code -eq 0) {
+        Write-Host "  -> [$Name] installation complete." -ForegroundColor Green
+    }
+    elseif ($code -eq 3010 -or $code -eq 1641) {
+        Write-Host "  -> [$Name] installation complete (reboot required)." -ForegroundColor Yellow
+        $script:RebootNeeded = $true
+    }
+    else {
+        Write-Host "  -> [$Name] a problem occurred during installation (exit code: $code)." -ForegroundColor Red
+    }
+}
+#endregion
+
 # ===== Execution =====
 Ensure-Winget
 
+# Apps installed via winget
 $apps = @(
     @{ Id = "Google.Chrome";              Name = "Google Chrome";       Reboot = $false },
     @{ Id = "Docker.DockerDesktop";       Name = "Docker Desktop";      Reboot = $true  },
     @{ Id = "Microsoft.VisualStudioCode"; Name = "Visual Studio Code";  Reboot = $false },
     @{ Id = "Anthropic.Claude";           Name = "Claude Desktop";      Reboot = $false },
     @{ Id = "Microsoft.Office";           Name = "Microsoft Office";    Reboot = $false },
-    @{ Id = "Autodesk.Fusion360";         Name = "Autodesk Fusion 360"; Reboot = $false },
     @{ Id = "Git.Git";                    Name = "Git";                 Reboot = $false },
     @{ Id = "GitHub.GitHubDesktop";       Name = "GitHub Desktop";      Reboot = $false },
     @{ Id = "GitHub.cli";                 Name = "GitHub CLI";          Reboot = $false }
@@ -104,6 +173,18 @@ $apps = @(
 
 foreach ($app in $apps) {
     Install-App -Id $app.Id -Name $app.Name -MayRequireReboot $app.Reboot
+}
+
+# Apps installed via Chocolatey (not reliably available in winget)
+$chocoApps = @(
+    @{ Id = "autodesk-fusion360"; Name = "Autodesk Fusion 360" }
+)
+
+if ($chocoApps.Count -gt 0) {
+    Ensure-Chocolatey
+    foreach ($app in $chocoApps) {
+        Install-ChocoApp -Id $app.Id -Name $app.Name
+    }
 }
 
 Write-Host "`nAll installation tasks complete." -ForegroundColor Green
