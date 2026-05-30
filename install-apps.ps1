@@ -139,8 +139,24 @@ function Install-ChocoApp {
     }
 
     Write-Host "  -> Starting installation..." -ForegroundColor Green
-    choco install $Id -y --no-progress
+    # Capture output so we can detect a checksum mismatch, while still showing it to the user
+    $output = choco install $Id -y --no-progress 2>&1 | Tee-Object -Variable captured
+    $output | Write-Host
     $code = $LASTEXITCODE
+    $logText = ($captured | Out-String)
+
+    # Detect a hash/checksum mismatch (common when the vendor updates the installer
+    # but the package manifest's recorded checksum lags behind)
+    $hashMismatch = $logText -match "(?i)hash(es)? (do(es)? not|don't) match" -or `
+                    $logText -match "(?i)checksum.*(did not|does not|doesn't) match" -or `
+                    $logText -match "(?i)checksums do not match"
+
+    if (($code -ne 0 -and $code -ne 3010 -and $code -ne 1641) -and $hashMismatch) {
+        Write-Host "  -> Checksum mismatch detected. Retrying with --ignore-checksums..." -ForegroundColor Yellow
+        Write-Host "     (This bypasses integrity verification; only safe for trusted official packages.)" -ForegroundColor DarkYellow
+        choco install $Id -y --no-progress --ignore-checksums
+        $code = $LASTEXITCODE
+    }
 
     # Chocolatey exit codes: 0 = success, 3010 = success but reboot required
     if ($code -eq 0) {
