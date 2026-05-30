@@ -1,18 +1,18 @@
 # install-apps.ps1
-# 관리자 권한으로 PowerShell에서 실행하세요
-# 실행: powershell -ExecutionPolicy Bypass -File .\install-apps.ps1
+# Run in PowerShell with administrator privileges
+# Run command: powershell -ExecutionPolicy Bypass -File .\install-apps.ps1
 
-# 재부팅 필요 여부 플래그
+# Flag indicating whether a reboot is required
 $script:RebootNeeded = $false
 
-#region winget 설치 확인 및 설치
+#region Check for winget and install if missing
 function Ensure-Winget {
     if (Get-Command winget -ErrorAction SilentlyContinue) {
-        Write-Host "winget이 이미 설치되어 있습니다." -ForegroundColor Green
+        Write-Host "winget is already installed." -ForegroundColor Green
         return
     }
 
-    Write-Host "winget이 없습니다. 설치를 시작합니다..." -ForegroundColor Yellow
+    Write-Host "winget not found. Starting installation..." -ForegroundColor Yellow
 
     $temp = Join-Path $env:TEMP "winget-setup"
     New-Item -ItemType Directory -Force -Path $temp | Out-Null
@@ -33,20 +33,20 @@ function Ensure-Winget {
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
         if (Get-Command winget -ErrorAction SilentlyContinue) {
-            Write-Host "winget 설치 완료." -ForegroundColor Green
+            Write-Host "winget installation complete." -ForegroundColor Green
         } else {
-            throw "winget 설치 후에도 명령을 찾을 수 없습니다. PowerShell을 재시작한 뒤 다시 실행해 주세요."
+            throw "winget command not found even after installation. Please restart PowerShell and run again."
         }
     }
     catch {
-        Write-Host "winget 자동 설치 실패: $_" -ForegroundColor Red
-        Write-Host "Microsoft Store에서 '앱 설치 관리자(App Installer)'를 수동으로 설치한 후 다시 실행하세요." -ForegroundColor Red
+        Write-Host "Automatic winget installation failed: $_" -ForegroundColor Red
+        Write-Host "Please install 'App Installer' manually from the Microsoft Store, then run again." -ForegroundColor Red
         exit 1
     }
 }
 #endregion
 
-#region 설치 헬퍼 (이미 설치된 경우 건너뛰기)
+#region Install helper (skips if already installed)
 function Install-App {
     param(
         [string]$Id,
@@ -54,40 +54,40 @@ function Install-App {
         [bool]$MayRequireReboot = $false
     )
 
-    Write-Host "`n[$Name] 확인 중..." -ForegroundColor Cyan
+    Write-Host "`n[$Name] Checking..." -ForegroundColor Cyan
 
     $installed = winget list --id $Id -e --accept-source-agreements 2>$null | Select-String -SimpleMatch $Id
     if ($installed) {
-        Write-Host "  -> 이미 설치되어 있어 건너뜁니다." -ForegroundColor Yellow
+        Write-Host "  -> Already installed, skipping." -ForegroundColor Yellow
         return
     }
 
-    Write-Host "  -> 설치를 시작합니다..." -ForegroundColor Green
+    Write-Host "  -> Starting installation..." -ForegroundColor Green
     winget install --id $Id -e --silent --accept-source-agreements --accept-package-agreements
     $code = $LASTEXITCODE
 
-    # winget 재부팅 관련 종료 코드 처리
-    # 0x8A150109 (-1978335479) = 설치 후 재부팅 필요
-    # 0x8A150108 (-1978335480) = 재부팅 후 설치 재개 필요
+    # Handle winget reboot-related exit codes
+    # 0x8A150109 (-1978335479) = reboot required after install
+    # 0x8A150108 (-1978335480) = reboot required to resume install
     if ($code -eq 0) {
-        Write-Host "  -> [$Name] 설치 완료." -ForegroundColor Green
+        Write-Host "  -> [$Name] installation complete." -ForegroundColor Green
     }
     elseif ($code -eq -1978335479 -or $code -eq -1978335480 -or $code -eq 3010) {
-        Write-Host "  -> [$Name] 설치 완료 (재부팅 필요)." -ForegroundColor Yellow
+        Write-Host "  -> [$Name] installation complete (reboot required)." -ForegroundColor Yellow
         $script:RebootNeeded = $true
     }
     else {
-        Write-Host "  -> [$Name] 설치 중 문제가 발생했습니다 (종료 코드: $code)." -ForegroundColor Red
+        Write-Host "  -> [$Name] a problem occurred during installation (exit code: $code)." -ForegroundColor Red
     }
 
-    # Docker처럼 재부팅이 거의 항상 필요한 앱은 플래그 강제 설정
+    # Force the flag for apps like Docker that almost always require a reboot
     if ($MayRequireReboot -and $code -eq 0) {
         $script:RebootNeeded = $true
     }
 }
 #endregion
 
-# ===== 실행 =====
+# ===== Execution =====
 Ensure-Winget
 
 $apps = @(
@@ -106,18 +106,18 @@ foreach ($app in $apps) {
     Install-App -Id $app.Id -Name $app.Name -MayRequireReboot $app.Reboot
 }
 
-Write-Host "`n모든 설치 작업이 완료되었습니다." -ForegroundColor Green
+Write-Host "`nAll installation tasks complete." -ForegroundColor Green
 
-#region 자동 재부팅
+#region Automatic reboot
 if ($script:RebootNeeded) {
-    Write-Host "`n일부 프로그램(예: Docker Desktop)을 완전히 사용하려면 재부팅이 필요합니다." -ForegroundColor Yellow
+    Write-Host "`nSome programs (e.g. Docker Desktop) require a reboot to work fully." -ForegroundColor Yellow
 
-    $timeout = 30  # 초
-    Write-Host "$timeout초 후 자동으로 재부팅됩니다. 취소하려면 아무 키나 누르세요..." -ForegroundColor Yellow
+    $timeout = 30  # seconds
+    Write-Host "The system will reboot automatically in $timeout seconds. Press any key to cancel..." -ForegroundColor Yellow
 
     $cancelled = $false
     for ($i = $timeout; $i -gt 0; $i--) {
-        Write-Host "`r재부팅까지 $i초... (취소: 키 입력)   " -NoNewline
+        Write-Host "`rRebooting in $i seconds... (press a key to cancel)   " -NoNewline
         if ([Console]::KeyAvailable) {
             [Console]::ReadKey($true) | Out-Null
             $cancelled = $true
@@ -128,13 +128,13 @@ if ($script:RebootNeeded) {
     Write-Host ""
 
     if ($cancelled) {
-        Write-Host "자동 재부팅이 취소되었습니다. 나중에 직접 재부팅해 주세요." -ForegroundColor Cyan
+        Write-Host "Automatic reboot cancelled. Please reboot manually later." -ForegroundColor Cyan
     } else {
-        Write-Host "재부팅합니다..." -ForegroundColor Green
+        Write-Host "Rebooting..." -ForegroundColor Green
         Restart-Computer -Force
     }
 }
 else {
-    Write-Host "`n재부팅이 필요하지 않습니다." -ForegroundColor Green
+    Write-Host "`nNo reboot required." -ForegroundColor Green
 }
 #endregion
