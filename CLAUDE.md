@@ -219,15 +219,46 @@ All Python code must pass **Ruff** (linter and formatter) before committing.
 
 ---
 
-## 7. Research Before Coding
+## 7. Research Before Coding & MCP Servers
 
-Before calling into an unfamiliar library, API, or CLI, verify its actual interface rather than guessing from memory.
+Before calling into an unfamiliar library, API, or CLI, verify its actual interface rather than guessing from memory. Three MCP servers are **mandatory** tools for this workflow: **Serena** for semantic code navigation, **Context7** for up-to-date library documentation, and **Fetch** for pulling in reference material from the web.
 
-### Rules
+### 7.1 Required MCP Servers
 
-1. **Consult official documentation first** via Context7 MCP or web search.
-2. **Search the repository** for prior implementations before writing new code against the same interface.
-3. **Trust documentation over intuition**: when the docs disagree with the mental model, update the mental model.
+| MCP server | Purpose | When to use |
+|------------|---------|-------------|
+| **Serena** | Semantic, symbol-level code retrieval and editing (LSP-backed). | Exploring the codebase, locating symbols/definitions/references, and making precise edits — **before** falling back to plain text search or full-file reads. |
+| **Context7** | Fetches current, version-accurate documentation for libraries, frameworks, and APIs. | Before writing or changing any code that calls an external library, framework, or API. |
+| **Fetch** | Retrieves a web page and returns its content as Markdown. | Reviewing reference materials (spec pages, articles, docs not covered by Context7) cited in a task — see §4 Command Input Validation. |
+
+### 7.2 Rules
+
+1. **Use Serena for code understanding and edits**: Prefer Serena's symbol-level tools (find symbol, find references, navigate definitions, targeted symbol edits) over raw text search or rewriting whole files. This keeps context focused and edits precise.
+2. **Consult official documentation first via Context7**: When touching an unfamiliar or version-sensitive library/API, query Context7 for its current interface before coding.
+3. **Pull reference material with Fetch**: When a task cites a URL, spec, or article (§4), use Fetch to read it as Markdown before incorporating it. Fall back to plain web search only when neither Context7 nor Fetch yields the source.
+4. **Search the repository** for prior implementations (via Serena) before writing new code against the same interface.
+5. **Trust documentation over intuition**: when the docs disagree with the mental model, update the mental model.
+
+### 7.3 Setup
+
+Both servers are registered with Claude Code via `claude mcp add`. Example configuration:
+
+```bash
+# Serena — semantic code toolkit (run from the project root)
+claude mcp add serena -- \
+  uvx --from git+https://github.com/oraios/serena \
+  serena start-mcp-server --context ide-assistant --project "$(pwd)"
+
+# Context7 — up-to-date library documentation
+claude mcp add context7 -- npx -y @upstash/context7-mcp
+
+# Fetch — retrieve web pages as Markdown
+claude mcp add fetch -- uvx mcp-server-fetch
+```
+
+Verify all three are connected with `claude mcp list` (or `/mcp` inside a session) before relying on them.
+
+> **Sources**: [Serena](https://github.com/oraios/serena) · [Context7](https://github.com/upstash/context7) · [Fetch](https://github.com/modelcontextprotocol/servers/tree/main/src/fetch)
 
 ---
 
@@ -379,6 +410,7 @@ Adopt **GitHub Flow** — a lightweight single-main-branch strategy.
 - Changes are merged into `main` via **Pull Requests**
 - **Delete branches after merging**
 - **Open PRs even when working solo** (for self-review and history tracking)
+- **Prefer the `gh` CLI over raw `git` whenever possible.** Use `gh` for any GitHub-side operation (issues, PRs, reviews, releases, repo inspection — e.g. `gh issue create`, `gh pr create`, `gh pr merge`, `gh release create`). Reserve plain `git` for local version control that `gh` does not cover (staging, commits, local branches). This keeps the workflow consistent with §4 Task Management, which already drives issues and PRs through `gh`.
 
 ### 12.2 Branch Naming
 
