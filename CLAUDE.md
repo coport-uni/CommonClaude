@@ -153,13 +153,16 @@ Before writing ToDo.md, the following two checks must be performed:
 3. Get the user's confirmation on the `ToDo.md` contents.
 4. Once confirmed, create a GitHub issue via `gh issue create`.
 5. Cut a working branch from `main` using `<type>/<short-description>` naming (see §12.2).
-6. Check off completed items in `ToDo.md` as work progresses; every commit follows the Conventional Commits format (see §11).
-7. Update the GitHub issue via `gh issue edit` for completed items.
-8. Push the branch to remote.
-9. After work is complete, open a PR via `gh pr create` using the template in §15.2.
-10. After the PR is merged, delete the local branch.
+6. Do the work, then **verify it before any git operation** — on the real
+   hardware when hardware is involved (see §5.1 Verification Gate).
+7. Check off completed items in `ToDo.md` as work progresses; every commit follows the Conventional Commits format (see §11).
+8. Update the GitHub issue via `gh issue edit` for completed items.
+9. Push the branch to remote.
+10. After work is complete **and verified**, open a PR via `gh pr create` using the template in §15.2, with the verification output in its `## Testing` section.
+11. Merge only after the Testing section shows a clean, complete verification.
+12. After the PR is merged, delete the local branch.
 
-> **Reminder**: Steps 2 (`ToDo.md`), 4 (`gh issue create`), 5 (working branch), and 9 (PR) are **non-negotiable** for any task that touches code or documentation. Every task must have a corresponding `ToDo.md` entry, a GitHub issue, a dedicated branch, and a PR.
+> **Reminder**: Steps 2 (`ToDo.md`), 4 (`gh issue create`), 5 (working branch), 6 (verification), and 10 (PR) are **non-negotiable** for any task that touches code or documentation. Every task must have a corresponding `ToDo.md` entry, a GitHub issue, a dedicated branch, a verification run, and a PR.
 
 ---
 
@@ -167,7 +170,54 @@ Before writing ToDo.md, the following two checks must be performed:
 
 Tests exist to verify the **correctness and quality** of code. Code quality must never be sacrificed just to pass tests.
 
-### Rules
+### 5.1 Verification Gate
+
+> **MANDATORY**: Never `git commit`, `git push`, open a pull request, or
+> merge work that has not been verified. Verification comes first, git
+> comes second. This holds for every change, including one-liners.
+
+Hardware is the strictest case. Code that drives a device is **not**
+verified until it has run **on that device**, with the operator present.
+A passing unit test, a clean import, a successful dry-run, or a careful
+reading of the diff is evidence about the code — not about the hardware.
+
+#### What counts as verified
+
+| Change | Required before the first commit |
+|---|---|
+| Device, driver, or motion-control code | A run on the real hardware with the operator present, and the actual console output kept for the PR |
+| Software-only logic | The relevant tests pass, plus the linter and formatter of §6 — with the output shown, not summarized |
+| Documentation | Every claim checked against the code, log, or measurement it describes |
+
+#### Rules
+
+1. **Verify, then commit.** The verification run happens on the working
+   tree, before `git add`. Committing first and testing afterwards
+   inverts this gate and is not allowed.
+2. **No device, no commit.** If the hardware is unavailable, powered
+   down, or held by another process, the work stays in the working tree
+   or on an unmerged branch. Do not commit an untested hardware path,
+   and never describe it as working.
+3. **Show the evidence.** Paste the real command output into the `##
+   Testing` section of the PR (§15.2). "Tested locally" with no output
+   does not satisfy this rule.
+4. **A failed or partial verification blocks push, PR, and merge.** Fix
+   the cause and re-verify from the start. Never merge a PR whose
+   Testing section records a failure, a skipped step, or a path that
+   was never exercised.
+5. **The operator gates every hardware run.** Never start motion,
+   actuation, heating, or power switching on your own initiative — ask,
+   wait for the confirmation, and keep the e-stop within reach. An
+   unattended run does not count as verification.
+6. **Report honestly.** State plainly what was verified, what was
+   skipped, and why. An honest "not yet verified on the bench" in the
+   PR body is correct; an optimistic summary is a defect.
+7. **No exceptions for size or urgency.** "It is only a comment", "it is
+   a trivial rename", and "the bench is busy" are not waivers. When
+   verification is impossible right now, leave the branch unmerged until
+   it is possible.
+
+### 5.2 Test Quality Rules
 
 1. **No magic numbers**: Do not use arbitrary numbers or values directly to pass tests. All values must be defined as meaningful constants or variables.
    ```c
@@ -278,6 +328,14 @@ Rationale: `claude_test/` is a scratch area for one-off diagnostics where strict
 ### One-off exploratory analysis
 
 Exploratory or analysis scripts (typically under `claude_test/`) may use numeric literals directly, provided the file opens with a short intent comment explaining purpose and expected lifetime. This waiver does not apply to code under `tests/` or to production modules.
+
+### Not waivable: the Verification Gate
+
+§5.1 has **no exception list**. A `claude_test/` script that touches
+hardware is still hardware work, and a one-line documentation fix is
+still a claim that must be checked. The waivers above relax style and
+docstring requirements only; they never relax what must be true before
+committing, pushing, proposing, or merging.
 
 ### `ToDo.md` checkbox updates
 
@@ -405,9 +463,13 @@ Adopt **GitHub Flow** — a lightweight single-main-branch strategy.
 
 ### 12.1 Principles
 
-- `main` is **always in a deployable state**
+- `main` is **always in a deployable state** — which is why only
+  **verified** work reaches it (§5.1 Verification Gate)
 - Work happens on **separate branches** cut from `main`
 - Changes are merged into `main` via **Pull Requests**
+- **Commit, push, PR, and merge only after the work is verified.** An
+  unverified branch may exist locally; it may not be pushed, proposed,
+  or merged
 - **Delete branches after merging**
 - **Open PRs even when working solo** (for self-review and history tracking)
 - **Prefer the `gh` CLI over raw `git` whenever possible.** Use `gh` for any GitHub-side operation (issues, PRs, reviews, releases, repo inspection — e.g. `gh issue create`, `gh pr create`, `gh pr merge`, `gh release create`). Reserve plain `git` for local version control that `gh` does not cover (staging, commits, local branches). This keeps the workflow consistent with §4 Task Management, which already drives issues and PRs through `gh`.
@@ -574,7 +636,10 @@ feat(parser): add JSON config loader
 - Motivation behind the change
 
 ## Testing
-- How the change was verified (added tests, manual testing, etc.)
+- How the change was verified: the exact commands run and their real
+  output. For hardware, state the device, the date, and that the
+  operator was present (§5.1). Write "NOT VERIFIED" explicitly if a
+  path could not be exercised — such a PR must not be merged.
 
 ## Related Issues
 Closes #42

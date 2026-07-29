@@ -52,15 +52,27 @@ Every task follows this workflow:
 3. **User confirmation** — Get approval on ToDo.md contents
 4. **Create GitHub issue** — Register via `gh issue create`
 5. **Execute** — Check off completed items in ToDo.md
-6. **Update issue** — Sync progress via `gh issue edit`
+6. **Verify** — Run the work and confirm it, on the real hardware when
+   hardware is involved (see Verification Gate below)
+7. **Update issue** — Sync progress via `gh issue edit`
 
-### 4. Testing Rules
+### 4. Verification Gate
+
+- **Never commit, push, open a PR, or merge unverified work.** Verify
+  first, then use git — no exception for small or urgent changes
+- **Hardware code is verified only by a run on the hardware**, with the
+  operator present; tests and dry-runs do not substitute
+- **Paste the real output** into the PR's `## Testing` section; a failed,
+  partial, or skipped verification blocks the merge
+- See `CLAUDE.md` §5.1 for the full rule
+
+### 5. Testing Rules
 
 - **No magic numbers** — Use meaningful constants instead of unexplained values
 - **No hardcoding** — Never write code that only passes specific test inputs
 - **Code quality first** — Prioritize readability, maintainability, and correctness over passing tests
 
-### 5. Using `ultrathink`
+### 6. Using `ultrathink`
 
 When in **plan mode** or tackling **complex tasks**, append `ultrathink` to the end of your command. This signals Claude to use extended reasoning for deeper analysis.
 

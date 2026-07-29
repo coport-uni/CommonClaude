@@ -72,3 +72,28 @@ Reference: https://mitcommlab.mit.edu/broad/commkit/coding-and-comment-style/
   Rewire it to call `clang-format --dry-run --Werror` and `cppcheck`
   on `*.c` / `*.h` writes. README §Automated Enforcement already reflects
   the target behavior; the script change is deferred to a separate task.
+
+---
+
+## 2026-07-29 — Verification Gate: no git operation before the work is verified
+
+**Issue**: #29 · **Branch**: `docs/verification-gate`
+
+The ruleset said how to move work through git, never when work has
+earned the right to enter it. Requested by the operator after hardware
+changes reached `main` without ever having run on the bench.
+
+### Work items
+- [x] Register GitHub issue (#29)
+- [x] `git checkout -b docs/verification-gate origin/main`
+- [x] Record this ToDo entry in `ToDo.md`
+- [x] `CLAUDE.md` §5.1: new Verification Gate (mandatory; hardware needs
+      a real run with the operator present; 7 rules)
+- [x] `CLAUDE.md` §5.2: renumber the existing test-quality rules
+- [x] `CLAUDE.md` §4 Workflow: verification is a step before the first
+      commit; merge gated on a clean Testing section
+- [x] `CLAUDE.md` §8: the gate is explicitly **not** waivable
+- [x] `CLAUDE.md` §12.1 principles + §15.2 PR template
+- [x] `README.md`: Verification Gate summary, sections renumbered
+- [ ] Verify cross-references, commit, push, open PR
+- [ ] Merge and close #29
