@@ -2,8 +2,8 @@
 
 > Patterns extracted from `ToDo.md` Completed items. Consult the relevant sections before drafting new ToDo entries. Append new patterns after each task completes (see CLAUDE.md §9 Learned Patterns Reference).
 >
-> Last updated: 2026-04-22
-> Total patterns: 15
+> Last updated: 2026-09-28
+> Total patterns: 16
 >
 > Provenance format: `(from ToDo#N)` where N is the 1-based index of the top-level `##` section in `ToDo.md` at the time of extraction.
 
@@ -115,6 +115,13 @@
 
 - **Note**: Hooks are invoked from arbitrary working directories, so absolute paths must be derived from `$CLAUDE_PROJECT_DIR`.
 - **Rule**: Never hardcode a repo path in hook scripts; always reference `$CLAUDE_PROJECT_DIR`. (from ToDo#2)
+
+### E4. Claude Code on Windows passes backslash paths to hooks
+
+- **Problem**: `pre-write-guard.sh` and `post-write-debug-remind.sh` never fired on a Windows 11 host, so a debug script landed in `tests/`.
+- **Cause**: Claude Code sends `tool_input.file_path` as `C:\...\tests\x.py`; the hooks test `*/tests/*` with forward-slash globs.
+- **Fix**: Normalise `file_path="${file_path//\\//}"` right after the `jq` extraction in every hook that inspects a path.
+- **Rule**: Always normalise path separators before matching paths in hooks, and verify hooks with the real tool on each host rather than with a hand-written payload only. (from ToDo#7)
 
 ---
 

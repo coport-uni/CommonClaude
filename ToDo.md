@@ -97,3 +97,26 @@ changes reached `main` without ever having run on the bench.
 - [x] `README.md`: Verification Gate summary, sections renumbered
 - [ ] Verify cross-references, commit, push, open PR
 - [ ] Merge and close #29
+
+---
+
+## 2026-09-28 — Hook path guards fail on Windows checkouts
+
+**Issue**: #31 · **Branch**: `fix/windows-hook-paths`
+
+Found while verifying the harness of a downstream project on a Windows
+11 host (Claude Code in Git Bash). Claude Code passes tool file paths
+as `C:\...\tests\debug_x.py`, while `pre-write-guard.sh` and
+`post-write-debug-remind.sh` match `*/tests/*` and `*/claude_test/*`
+with forward-slash globs, so the guards never fire on Windows.
+
+### Work items
+- [x] Record this ToDo entry in `ToDo.md`
+- [x] `git checkout -b fix/windows-hook-paths origin/main` (HEAD = ca42b88)
+- [x] Normalise `file_path` backslashes to `/` in `pre-write-guard.sh`,
+      `post-write-debug-remind.sh`, `pre-read-env-guard.sh` before the
+      path checks
+- [x] Verify each hook with both a backslash and a forward-slash
+      payload (block and pass cases); output in the PR Testing section
+- [ ] Register GitHub issue, commit, push, open PR
+- [x] `LearnedPatterns.md` §5 entry for Windows hook paths (E4)
