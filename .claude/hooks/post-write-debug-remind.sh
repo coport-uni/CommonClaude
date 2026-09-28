@@ -9,6 +9,10 @@ file_path=$(
         | jq -r '.tool_input.file_path // empty'
 )
 
+# Claude Code on Windows passes backslash paths; the checks below
+# expect forward slashes.
+file_path="${file_path//\\//}"
+
 if [[ -z "$file_path" ]]; then
     exit 0
 fi
